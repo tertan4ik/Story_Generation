@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор глупых историй</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            font-size: 1em;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+            background-color: #fff;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        #storyOutput {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+            min-height: 150px;
+            line-height: 1.6;
+            font-size: 1em;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.5em; }
+            .form-container, #storyOutput { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Генератор глупых историй</h1>
+    <div class="form-container">
+        <label for="character">Персонаж:</label>
+        <select id="character">
+            <option value="человек">Человек</option>
+            <option value="животное">Животное</option>
+            <option value="мифическое существо">Мифическое существо</option>
+            <option value="custom">Свой вариант</option>
+        </select>
+        <input type="text" id="customCharacter" placeholder="Введите своего персонажа" style="display: none;">
+
+        <label for="place">Место действия:</label>
+        <select id="place">
+            <option value="город">Город</option>
+            <option value="лес">Лес</option>
+            <option value="космос">Космос</option>
+            <option value="custom">Свой вариант</option>
+        </select>
+        <input type="text" id="customPlace" placeholder="Введите свое место" style="display: none;">
+
+        <label for="event">Событие:</label>
+        <select id="event">
+            <option value="праздник">Праздник</option>
+            <option value="приключение">Приключение</option>
+            <option value="катастрофа">Катастрофа</option>
+            <option value="custom">Свой вариант</option>
+        </select>
+        <input type="text" id="customEvent" placeholder="Введите свое событие" style="display: none;">
+
+        <button onclick="generateStory()">Сгенерировать историю!</button>
+    </div>
+    <div id="storyOutput">Твоя история появится здесь...</div>
+
+    <script>
+        // Показать/скрыть поля для ввода
+        document.getElementById('character').addEventListener('change', function() {
+            document.getElementById('customCharacter').style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+        document.getElementById('place').addEventListener('change', function() {
+            document.getElementById('customPlace').style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+        document.getElementById('event').addEventListener('change', function() {
+            document.getElementById('customEvent').style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        function generateStory() {
+            // Получение значений
+            let character = document.getElementById('character').value;
+            if (character === 'custom') {
+                character = document.getElementById('customCharacter').value || 'Загадочный герой';
+            }
+            let place = document.getElementById('place').value;
+            if (place === 'custom') {
+                place = document.getElementById('customPlace').value || 'Неизведанное место';
+            }
+            let event = document.getElementById('event').value;
+            if (event === 'custom') {
+                event = document.getElementById('customEvent').value || 'Странное событие';
+            }
+
+            // Шаблоны для длинных историй
+            const intros = {
+                'человек': [
+                    `Жил-был в ${place} ${character} по имени Саша. Каждое утро он смотрел в окно и мечтал о чём-то большем. Но однажды всё изменилось...`,
+                    `В самом центре ${place} ${character} по имени Маша случайно нашёл старую книгу. Открыв её, он понял, что ${event} уже близко.`,
+                    `${character} по имени Дима был известен в ${place} как любитель приключений. В один день он наткнулся на странный знак, связанный с ${event}.`
+                ],
+                'животное': [
+                    `В глубине ${place} обитал ${character} по кличке Бублик. Он был не таким, как другие, и всегда искал что-то необычное. И вот, ${event} постучалось в его жизнь.`,
+                    `${character} по имени Мурка гуляла по ${place}, когда заметила странное сияние. Это был знак, что ${event} уже началось.`,
+                    `Среди обитателей ${place} ${character} по имени Шарик был самым любопытным. Его новая история началась с ${event}.`
+                ],
+                'мифическое существо': [
+                    `Легенды ${place} гласили, что ${character} по имени Зорро владел древней магией. Когда ${event} пришло, он решил действовать.`,
+                    `Над просторами ${place} парил ${character} по имени Фея. Звёзды шепнули ей о ${event}, и она отправилась в путь.`,
+                    `В тенях ${place} скрывался ${character} по имени Драко. ${event} пробудило его, и он вышел на свет.`
+                ]
+            };
+
+            const middles = {
+                'город': [
+                    `Саша шёл по оживлённым улицам, где фонари мигали в ритме музыки. Вдруг ${event} вспыхнуло: небо окрасилось в яркие цвета, и он оказался в центре событий.`,
+                    `Маша обнаружила тайный подвал под старым домом. Там ${event} набирало силу, и она решила раскрыть его секрет.`,
+                    `Дима заметил, как машины начали петь, а мосты зашевелились. ${event} меняло город, и он понял, что пора действовать.`
+                ],
+                'лес': [
+                    `Бублик пробирался через заросли, где листья шептались о прошлом. ${event} началось с громкого хлопка, и он побежал навстречу судьбе.`,
+                    `Мурка нашла поляну, где цветы светились в темноте. ${event} развернулось прямо перед ней, и она не могла остаться в стороне.`,
+                    `Шарик услышал, как ветер запел странную мелодию. ${event} пришло в лес, и он решил выяснить, что происходит.`
+                ],
+                'космос': [
+                    `Зорро летел среди звёзд, где планеты кружились в танце. ${event} зажгло небо, и он устремился к источнику света.`,
+                    `Фея приземлилась на астероид, покрытый кристаллами. ${event} уже началось, и она решила вмешаться.`,
+                    `Драко увидел, как галактика замерцала. ${event} изменило космос, и он отправился на поиски ответов.`
+                ]
+            };
+
+            const endings = {
+                'праздник': [
+                    `Когда ${event} достигло апогея, весь ${place} собрался на главной площади. Все пели, танцевали, а пироги, к удивлению Саши, начали рассказывать анекдоты! Этот день вошёл в историю.`,
+                    `${event} превратилось в фестиваль, где даже деревья пустились в пляс. Маша научилась жонглировать звёздами, и ${place} засиял ярче.`,
+                    `В финале ${event} небо украсил фейерверк, который спел песню. Дима понял, что дружба — это магия, и ${place} стал теплее.`
+                ],
+                'приключение': [
+                    `После ${event} Бублик нашёл древний ключ, открывающий двери в другие миры. Он решил оставить ${place} полным чудес и ушёл в новую историю.`,
+                    `${event} привело Мурку к пещере с сокровищами. Она поделилась ими с жителями ${place}, и её имя стало легендой.`,
+                    `В конце ${event} Шарик обнаружил карту звёзд. Он решил остаться в ${place}, но каждый вечер смотрел в небо, мечтая о новом пути.`
+                ],
+                'катастрофа': [
+                    `Несмотря на ${event}, Зорро спас ${place}, превратив хаос в смех. Все обнимались, а тучи рассеялись, открыв радугу.`,
+                    `${event} чуть не разрушило всё, но Фея создала волшебный щит. Жители ${place} устроили пир, и никто не вспоминал о беде.`,
+                    `Когда ${event} утихло, Драко посадил новое дерево в центре ${place}. Оно зацвело, и все поняли, что жизнь продолжается.`
+                ]
+            };
+
+            // Выбор случайных частей
+            const intro = (intros[character] || intros['человек']).sort(() => Math.random() - 0.5)[0];
+            const middle = (middles[place] || middles['город']).sort(() => Math.random() - 0.5)[0];
+            const ending = (endings[event] || endings['праздник']).sort(() => Math.random() - 0.5)[0];
+
+            // Собираем историю
+            const story = `${intro}\n\n${middle}\n\n${ending}`;
+            document.getElementById('storyOutput').innerText = story;
+        }
+    </script>
+</body>
+</html>
