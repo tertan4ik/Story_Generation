@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор глупых историй</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1c2526;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                /* Night City фон */
+                linear-gradient(180deg, rgba(28, 37, 38, 0.9), rgba(44, 54, 57, 0.7)),
+                /* Гопники в розовом адидасе с Hello Kitty */
+                url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"%3E%3Cg opacity="0.3"%3E%3Ccircle cx="80" cy="70" r="20" fill="%23ff9999"/%3E%3Cpath d="M70 50 L75 40 L80 50 L85 40 L90 50" stroke="%23cc6666" stroke-width="3"/%3E%3Crect x="70" y="90" width="20" height="30" fill="%23ff9999"/%3E%3Cpath d="M75 90 L75 110 M85 90 L85 110" stroke="%23ffffff" stroke-width="2"/%3E%3Ccircle cx="220" cy="230" r="20" fill="%23ff9999"/%3E%3Cpath d="M210 210 L215 200 L220 210 L225 200 L230 210" stroke="%23cc6666" stroke-width="3"/%3E%3Crect x="210" y="250" width="20" height="30" fill="%23ff9999"/%3E%3Cpath d="M215 250 L215 270 M225 250 L225 270" stroke="%23ffffff" stroke-width="2"/%3E%3C/g%3E%3C/svg%3E');
+            background-size: cover, 300px 300px;
+            background-position: center, 0 0;
+            z-index: -1;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            color: #cc3333;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .form-container {
+            background: #2c3639;
+            border-radius: 12px;
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+            font-size: 1.1em;
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+
+        .character-checkboxes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .character-checkboxes label {
+            display: flex;
+            align-items: center;
+            font-size: 1em;
+            margin: 0;
+        }
+
+        .character-checkboxes input[type="checkbox"] {
+            margin-right: 10px;
+            accent-color: #cc3333;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            background: #3e4b4e;
+            border: 1px solid #526063;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3366cc;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #cc3333;
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button:hover {
+            background: #b32d2d;
+            transform: translateY(-2px);
+        }
+
+        #storyOutput {
+            background: #2c3639;
+            border-radius: 12px;
+            padding: 25px;
+            width: 100%;
+            max-width: 700px;
+            min-height: 200px;
+            line-height: 1.6;
+            font-size: 1em;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .error {
+            color: #cc3333;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8em; }
+            .form-container, #storyOutput { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Генератор глупых историй</h1>
+    <div class="form-container">
+        <label>Персонажи (выбери до 3):</label>
+        <div class="character-checkboxes">
+            <label><input type="checkbox" value="гопник"> Гопник в адидасе</label>
+            <label><input type="checkbox" value="кибер-кот"> Кибер-кот</label>
+            <label><input type="checkbox" value="стрит-рейсер"> Стрит-рейсер</label>
+            <label><input type="checkbox" value="техно-шаман"> Техно-шаман</label>
+            <label><input type="checkbox" value="custom"> Свой вариант</label>
+        </div>
+        <input type="text" id="customCharacter" placeholder="Введи своего героя" style="display: none;">
+        <div id="characterError" class="error" style="display: none;">Выбери хотя бы одного персонажа!</div>
+
+        <label for="place">Место действия:</label>
+        <select id="place">
+            <option value="городской район">Городской район</option>
+            <option value="техно-лес">Техно-лес</option>
+            <option value="космический док">Космический док</option>
+            <option value="подземный рынок">Подземный рынок</option>
+            <option value="custom">Свой вариант</option>
+        </select>
+        <input type="text" id="customPlace" placeholder="Введи своё место" style="display: none;">
+
+        <label for="event">Событие:</label>
+        <select id="event">
+            <option value="уличная тусовка">Уличная тусовка</option>
+            <option value="тайный рейд">Тайный рейд</option>
+            <option value="техно-сбой">Техно-сбой</option>
+            <option value="грандиозный заезд">Грандиозный заезд</option>
+            <option value="custom">Свой вариант</option>
+        </select>
+        <input type="text" id="customEvent" placeholder="Введи своё событие" style="display: none;">
+
+        <button onclick="generateStory()">Создать историю!</button>
+    </div>
+    <div id="storyOutput">Твоя история появится здесь...</div>
+
+    <script>
+        // Показать/скрыть поле для кастомного персонажа
+        const customCheckbox = document.querySelector('input[value="custom"]');
+        customCheckbox.addEventListener('change', function() {
+            document.getElementById('customCharacter').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Показать/скрыть поле для кастомного места
+        document.getElementById('place').addEventListener('change', function() {
+            document.getElementById('customPlace').style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        // Показать/скрыть поле для кастомного события
+        document.getElementById('event').addEventListener('change', function() {
+            document.getElementById('customEvent').style.display = this.value === 'custom' ? 'block' : 'none';
+        });
+
+        // Ограничение на выбор до 3 персонажей
+        document.querySelectorAll('.character-checkboxes input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const checked = document.querySelectorAll('.character-checkboxes input[type="checkbox"]:checked');
+                if (checked.length > 3) {
+                    this.checked = false;
+                }
+            });
+        });
+
+        function generateStory() {
+            // Получение персонажей
+            const checkboxes = document.querySelectorAll('.character-checkboxes input[type="checkbox"]:checked');
+            let characters = Array.from(checkboxes).map(cb => cb.value);
+            if (characters.includes('custom')) {
+                const customChar = document.getElementById('customCharacter').value || 'Таинственный герой';
+                characters = characters.filter(c => c !== 'custom').concat([customChar]);
+            }
+            if (characters.length === 0) {
+                document.getElementById('characterError').style.display = 'block';
+                return;
+            }
+            document.getElementById('characterError').style.display = 'none';
+
+            // Получение места
+            let place = document.getElementById('place').value;
+            if (place === 'custom') {
+                place = document.getElementById('customPlace').value || 'Неизвестный угол';
+            }
+
+            // Получение события
+            let event = document.getElementById('event').value;
+            if (event === 'custom') {
+                event = document.getElementById('customEvent').value || 'Странное событие';
+            }
+
+            // Шаблоны для историй
+            const intros = {
+                'гопник': `гопник в адидасе по имени Серый, в розовом с бантиком, был легендой ${place}.`,
+                'кибер-кот': `кибер-кот по кличке Пиксель, с ушами-бантиками, крался по ${place}.`,
+                'стрит-рейсер': `стрит-рейсер по имени Ника, чья тачка ревела в ${place}.`,
+                'техно-шаман': `техно-шаман по имени Заря, шептала коды в тенях ${place}.`
+            };
+
+            const middles = {
+                'городской район': [
+                    `Толпа в ${place} гудела, фонари скрипели, а стены хранили старые граффити. ${event} началось: улицы ожили, и команда рванула в эпицентр.`,
+                    `В ${place} старый киоск замигал, и ${event} накрыло асфальт. Герои переглянулись и нырнули в движ.`,
+                    `В ${place} машины загудели, как на сходке. ${event} взорвало ночь, и банда пошла разбираться.`
+                ],
+                'техно-лес': [
+                    `По ${place} ветки гудели, как провода, а мох шептал тайны. ${event} зажглось в чаще, и команда рванула к свету.`,
+                    `В ${place} тени запели, и ${event} сломало тишину. Герои шагнули в гущу, готовые ко всему.`,
+                    `В ${place} листья замигали кодами. ${event} грянуло, и банда рванула за правдой.`
+                ],
+                'космический док': [
+                    `В ${place} корабли гудели, как движки, а звёзды мигали. ${event} вспыхнуло, и команда рванула к ангару.`,
+                    `По ${place} дроны завыли, и ${event} открыло шлюзы. Герои прыгнули в бой, не оглядываясь.`,
+                    `В ${place} космос шептал пароли. ${event} всё изменило, и банда рванула в неизвестность.`
+                ],
+                'подземный рынок': [
+                    `В ${place} лотки гудели сделками, а толпа шептала слухи. ${event} ворвалось, и команда рванула к центру.`,
+                    `По ${place} лампы замигали, и ${event} сломало базар. Герои нырнули в толпу за ответами.`,
+                    `В ${place} чипы гудели, как рой. ${event} всё перевернуло, и банда пошла на дело.`
+                ]
+            };
+
+            const endings = {
+                'уличная тусовка': [
+                    `Когда ${event} накрыло ${place}, толпа собралась на главной улице. Команда качала вайб, гопники в розовом пели, и ночь вошла в легенды.`,
+                    `${event} взорвало ${place}. Герои раздавали чипы дружбы, фонари гудели, и тусовка стала вечной.`,
+                    `В финале ${event} все в ${place} обнялись. Банда зажгла костёр, и ночь осталась в сердцах.`
+                ],
+                'тайный рейд': [
+                    `После ${event} команда нашла тайник с древним кодом. Они оставили ${place} в покое и рванули в новую сагу.`,
+                    `${event} привело банду к секретному чипу. Они спрятали его в ${place}, и их имена стали мифом.`,
+                    `В конце ${event} герои взломали главный сервер. Они чилили в ${place}, но знали, что это начало.`
+                ],
+                'техно-сбой': [
+                    `Несмотря на ${event}, команда перезапустила ${place}. Гопники в адике танцевали, и утро пришло с надеждой.`,
+                    `${event} чуть не сломало ${place}, но банда починила сеть. Все пели, и район ожил заново.`,
+                    `Когда ${event} утихло, герои зажгли новый сигнал. ${place} вздохнул, и жизнь пошла дальше.`
+                ],
+                'грандиозный заезд': [
+                    `В разгар ${event} команда гнала через ${place}. Они порвали финиш, гопники в розовом орали, и ночь стала вечной.`,
+                    `${event} взорвало ${place}. Банда обогнала всех, фонари мигали, и их тачки стали иконами.`,
+                    `К финалу ${event} герои пересекли финиш в ${place}. Толпа качала, и они поняли, что это их время.`
+                ]
+            };
+
+            // Формируем вступление с несколькими персонажами
+            let intro;
+            if (characters.length === 1) {
+                const char = characters[0];
+                intro = (intros[char] || `${char}, тусовался в ${place}.`).replace('был', 'тусовался') + ` Когда ${event} грянуло, он рванул за движем...`;
+            } else {
+                const charDescriptions = characters.map(c => intros[c] || `${c}, тусовался в ${place}`).join(', ');
+                intro = `В ${place} тусила банда: ${charDescriptions}. Когда ${event} грянуло, они рванули за движем...`;
+            }
+
+            // Выбор случайных частей
+            const middle = (middles[place] || middles['городской район']).sort(() => Math.random() - 0.5)[0];
+            const ending = (endings[event] || endings['уличная тусовка']).sort(() => Math.random() - 0.5)[0];
+
+            // Собираем историю
+            const story = `${intro}\n\n${middle}\n\n${ending}`;
+            document.getElementById('storyOutput').innerText = story;
+        }
+    </script>
+</body>
+</html>
